@@ -1,5 +1,8 @@
 from django.shortcuts import render
 import plotly.express as px
+from .forms import AudioLabelForm
+from csv import DictWriter
+import os
 
 
 def chart(request):
@@ -15,4 +18,21 @@ def chart(request):
 
 
 def audio(request):
-    return render(request, 'maps/audio.html')
+    if request.method == "POST":
+        form = AudioLabelForm(request.POST)
+        if form.is_valid():
+            field_names = ["frequency1", "frequency2", "time1", "time2"]
+            file_path = "./maps/others/labels.csv"
+            write_header = not os.path.exists(file_path)
+            with open(file_path, "a", newline="") as csv_file:
+                dt = DictWriter(csv_file, fieldnames=field_names)
+                if write_header:
+                    dt.writeheader()
+                dt.writerow(form.cleaned_data)
+            print(form.cleaned_data)
+        else:
+            print("Not valid")
+
+    form = AudioLabelForm()
+
+    return render(request, 'maps/audio.html', {"form": form})

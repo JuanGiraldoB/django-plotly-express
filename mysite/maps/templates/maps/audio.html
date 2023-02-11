@@ -12,8 +12,19 @@
 </head>
 
 <body>
+    <form action="{% url 'audio' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
     <div id="myDiv"></div>
     <script>
+        let freq1 = document.getElementById("id_frequency1");
+        let freq2 = document.getElementById("id_frequency2");
+        let time1 = document.getElementById("id_time1");
+        let time2 = document.getElementById("id_time2");
+
+
         var graphDiv = document.getElementById('myDiv');
         var N = 1000;
         var color1 = '#7b3294';
@@ -82,7 +93,6 @@
         });
 
         graphDiv.on('plotly_selected', function (eventData) {
-            console.log("Puntos" + eventData.points[0].x)
             var x = [];
             var y = [];
 
@@ -90,7 +100,13 @@
             for (var i = 0; i < N; i++) colors.push(color1Light);
 
             eventData.points.forEach(function (pt) {
-                console.log(`puntos: ( ${pt.x}, ${pt.y} )`)
+                let convertX = parseFloat(pt.x)
+                let convertY = parseFloat(pt.y)
+                freq1.value = convertX;
+                time1.value = convertY;
+                freq2.value = convertX + 0.1;
+                time2.value = convertY + 0.1;
+                console.log(typeof pt.x)
                 x.push(pt.x);
                 y.push(pt.y);
                 colors[pt.pointNumber] = color1;
