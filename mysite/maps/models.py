@@ -8,3 +8,7 @@ class AudioLabel(models.Model):
     frequency2 = models.FloatField()
     time1 = models.FloatField()
     time2 = models.FloatField()
+
+
+class FileName(models.Model):
+    fileNames = models.TextField()
