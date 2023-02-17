@@ -4,6 +4,7 @@ from .forms import AudioLabelForm, FileNameForm
 from csv import DictWriter
 import os
 from .utils.utilities import dictform_to_list
+from django.http import HttpResponse, Http404
 
 
 def chart(request):
@@ -62,6 +63,15 @@ def saveFileNames(request):
                     csv_file.write(file)
                     csv_file.write('\n')
 
+            file_path = "./maps/static/file_names.csv"
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as fh:
+                    response = HttpResponse(
+                        fh.read(), content_type="application/vnd.ms-excel")
+                    response['Content-Disposition'] = 'inline; filename=' + \
+                        os.path.basename(file_path)
+                    return response
+            raise Http404
             return redirect('saveFileNames')
         else:
             print("not valid")
